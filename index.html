@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard do Monitoramento de Vendas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Importando o Chart.js -->
+    <style>
+        /* Estilos básicos */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* Estilo do menu lateral */
+        .sidebar {
+            height: 100%;
+            width: 60px; /* Largura inicial reduzida */
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            padding-top: 20px;
+            overflow: hidden;
+            transition: width 0.3s; /* Animação para expandir */
+        }
+
+        .sidebar:hover {
+            width: 250px; /* Largura expandida ao passar o mouse */
+        }
+
+        .sidebar a {
+            display: flex; /* Alinha o texto e o ícone */
+            align-items: center;
+            color: white;
+            padding: 15px;
+            text-decoration: none;
+            font-size: 18px;
+            white-space: nowrap; /* Impede quebra de texto */
+            overflow: hidden; /* Oculta o texto quando colapsado */
+            transition: padding 0.3s; /* Suaviza o ajuste de padding */
+        }
+
+        .sidebar:hover a {
+            overflow: visible; /* Permite que o texto completo seja exibido */
+        }
+
+        .sidebar a span {
+            display: inline-block;
+           
+            opacity: 0; /* Oculta o texto inicialmente */
+            transition: opacity 0.3s; /* Suaviza a exibição do texto */
+        }
+
+        .sidebar:hover a span {
+            opacity: 1; /* Exibe o texto ao expandir a barra lateral */
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        /* Estilo do conteúdo */
+        .content {
+            margin-left: 70px; /* Ajuste para a largura inicial da sidebar */
+            padding: 20px;
+            transition: margin-left 0.3s; /* Suaviza o ajuste do conteúdo */
+        }
+
+        .sidebar:hover ~ .content {
+            margin-left: 260px; /* Ajuste para a largura expandida da sidebar */
+        }
+
+        /* Cabeçalho */
+        .header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Seções */
+        .section-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .section {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h3 {
+            margin-top: 0;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0;
+            }
+
+            .section-container {
+                flex-direction: column;
+            }
+
+            .section {
+                width: 100%;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: relative;
+                padding-top: 10px;
+            }
+
+            .sidebar:hover {
+                width: 100%;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Menu lateral -->
+    <div class="sidebar">
+        <a href="#Home">I<span>nício</span></a>
+        <a href="#Reports">R<span>elatórios</span></a>
+        <a href="#Config">C<span>onfigurações</span></a>
+        <a href="#User">U<span>suários</span></a>
+        <a href="#Leave">S<span>air</span></a>
+    </div>
+
+    <!-- Conteúdo -->
+    <div class="content">
+        <!-- Cabeçalho -->
+        <div class="header">
+            <h1>Monitoramento de Vendas</h1>
+            <p>Visão geral dos dados</p>
+        </div>
+
+        <!-- Seções com Gráficos -->
+        <div class="section-container">
+            <div class="section">
+                <h3>Quantidade de vendas</h3>
+                <canvas id="barChart"></canvas> <!-- Canvas para o gráfico de barras -->
+            </div>
+            
+            <div class="section">
+                <h3>Estoque</h3>
+                <canvas id="pieChart"></canvas> <!-- Canvas para o gráfico de pizza -->
+            </div>
+
+            <div class="section">
+                <h3>Lucro das Vendas</h3>
+                <canvas id="lineChart"></canvas> <!-- Canvas para o gráfico de linhas -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Script JavaScript -->
+    <script>
+        // Gráfico de Barras
+        var ctx1 = document.getElementById('barChart').getContext('2d');
+        var barChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai'],
+                datasets: [{
+                    label: 'Vendas',
+                    data: [12, 19, 3, 79, 92],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Pizza
+        var ctx2 = document.getElementById('pieChart').getContext('2d');
+        var pieChart = new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: ['Copo', 'Camisa', 'Mochila'],
+                datasets: [{
+                    label: 'Estoque',
+                    data: [321, 58, 119],
+                    backgroundColor: ['#FF0000', '#0000FF', '#FFFF00'],
+                    borderColor: ['#FF0000', '#0000FF', '#FFFF00'],
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        // Gráfico de Linhas
+        var ctx3 = document.getElementById('lineChart').getContext('2d');
+        var lineChart = new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai'],
+                datasets: [{
+                    label: 'Lucro',
+                    data: [10, 15, 25, 19, 50],
+                    fill: false,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    tension: 0.1
+                }]
+            }
+        });
+    </script>
+
+</body>
+</html>
+
